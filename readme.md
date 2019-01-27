@@ -12,7 +12,6 @@ There are a few parts to the environment. Let's go through the files in this pro
 * `.gitignore`: source control, pretty standard
 * `readme.md`: This file
 * `parse.py`: The code to parse the log file
-* `test_parse.py`: Code to test tjhe code to parse the log file
 * `requirements.txt`: This is required for docker to run properly. Normally we would specify the python packages we need the docker container to install, but we don't have any external pacakge. We can just leave it blank.
 
 # How to run
