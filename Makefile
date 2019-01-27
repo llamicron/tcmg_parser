@@ -4,5 +4,8 @@ get_log:
 test:
 	pytest test_parse.py
 
+build:
+	docker build --tag=parse .
+
 run:
-	python parse.py
+	docker run parse
