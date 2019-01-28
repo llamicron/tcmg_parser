@@ -4,3 +4,4 @@ test_http_access_log
 .pytest_cache
 .vscode
 __pycache__
+logs/*

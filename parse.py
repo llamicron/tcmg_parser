@@ -1,9 +1,13 @@
 import re
 import operator
 
+# Lots of comments in this file, i normally don't write this many
+
 def parse_request(request_string):
     """
     This method takes in a request string, example below, and returns a dictionary of the data in the string.
+    Easier to work with an object like this.
+
     Example:
 
     This:
@@ -17,26 +21,26 @@ def parse_request(request_string):
             'file': 'index.html',
             'http_version': 'HTTP/1.0',
             'status_code': '200',
-            'size': '391'
+            'size': '391',
+            # Keep the original for later on
+            'original': 'local - - [24/Oct/1994:14:02:01 -0600] "GET index.html HTTP/1.0" 200 391'
         }
     """
 
-    # Empty request object
     req = {}
 
     # keys are the attributes we want to store, and values are the regex patterns to find the data in the request string
     matches = {
         # attr: regex pattern
-        'area': '(remote|local)',
-        'timestamp': '\[(.+)\]',
-        'method': '\"(\w+)',
-        'file': '\"\w+ (.+?) ',
+        'area':         '(remote|local)',
+        'timestamp':    '\[(.+)\]',
+        'method':       '\"(\w+)',
+        'file':         '\"\w+ (.+?) ',
         'http_version': '\"\w+ .+? (\w+/(\d|\.)+)',
-        'status_code': '\" (\d+)',
-        'size': '\" \d+ (\d+)'
+        'status_code':  '\" (\d+)',
+        'size':         '\" \d+ (\d+)'
     }
 
-    # For each key and pattern
     for key, pattern in matches.items():
         try:
             # Apply the pattern to the string and set the req[key]
@@ -45,18 +49,17 @@ def parse_request(request_string):
             # If there isn't a match, set req[key] = ''
             req[key] = ''
 
+    req['original'] = request_string
     return req
 
 # Here's our file
-fi = "test_http_access_log"
-# Get a list of the lines in the file
+fi = "http_access_log"
+# Get a list of the lines in the file, one request per line
 req_strings = open(fi, 'r').readlines()
 reqs = []
 for req_string in req_strings:
     # For each line in the file, create a new request object and add it to the reqs list
     reqs.append(parse_request(req_string))
-
-
 
 
 
@@ -144,5 +147,18 @@ print('most requested file is: ' + most_requested_file)
 # There are a lot with only 1 request, just print the amount instead of a name
 least_requested_files = [f[0] for f in file_counts.items() if f[1] == 1]
 print('There are ' + str(len(least_requested_files)) + ' files that were requested 1 time')
+
+months = list(monthly.keys())
+
+requests = []
+for month in months:
+    requests = [r['original'] for r in reqs if r['timestamp'][3:6] == month]
+
+    # I know it says to write the logs to the same directory as the code but that makes my heart hurt
+    with open('logs/' + month.lower() + '_request_log', 'w') as fi:
+        for req in requests:
+            fi.write(req)
+
+print('\nMonthly log files created in logs/')
 
 print('\nDone\n')
