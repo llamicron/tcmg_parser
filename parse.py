@@ -56,51 +56,62 @@ for req_string in req_strings:
     reqs.append(parse_request(req_string))
 
 
-# We now have a list of request objects with keys and values instead of strings. We can start counting things to report stats.
 
-# The first one is easy
-# Total number of requests; print the length of the requests list
-print(len(reqs))
 
-# The next one is a bit more challenging
-# Get a list of the dates of all the requests, with duplicates (that's important)
-dates = [d['timestamp'][0:11] for d in reqs]
-# Loop through all the dates (a version without duplicates)
-for date in set(dates):
-    # Print the number of occurances of each date in the dates list (there's one for each request, that's why we kept the duplicates)
-    if date == '':
-        print(str(dates.count(date)) + " requests with an invalid timestamp")
-    else:
-        print(str(dates.count(date)) + " requests on " + date)
 
-# We can do months in the exact same way, but exclude the day portion of the date string when we do our list comprehension. notice the '3' instead of '0'
-dates = [d['timestamp'][3:11] for d in reqs]
-for date in set(dates):
-    if date == '':
-        print(str(dates.count(date)) + " requests with an invalid timestamp")
-    else:
-        print(str(dates.count(date)) + " requests in " + date)
+# # We now have a list of request objects with keys and values instead of strings. We can start counting things to report stats.
 
-# Unfortunately we can't do weeks this way since that requires grouping day numbers. eg, 1-7, 8-14, etc.
-# We'll have to find another way
+# # The first one is easy
+# # Total number of requests; print the length of the requests list
+# print(len(reqs) + ' total requests')
 
-# Let's start the same way, get a list of dates of all the requests with duplicates
-dates = [d['timestamp'][0:11] for d in reqs]
 
-# This gives is a list of touples. First value is day number, second is month
-# [
-#   ('24', 'Oct'),
-#   ('25', 'Oct'),
-#   ('26', 'Oct'),
-#   ...
-# ]
-days = [d[0:2] for d in dates]
-months = [d[3:6] for d in dates]
-weekly = list(zip(days, months))
+# # Lets get a list of the timestamps, cutting out any that are == '' (errors in the logfile)
+# dates = [d['timestamp'][0:11] for d in reqs if d['timestamp'] != '']
 
-# Get rid of errors
-weekly = [w for w in weekly if w[0] != '']
-# Trim the list to only include every 7 days
-weekly = [w for w in weekly if int(w[0]) % 7 == 0]
+# # Split the dates from '24/Oct/1994' to ['24', 'Oct', '1994'] for all the items
+# dates = [d.split('/') for d in dates]
 
-print(weekly)
+# # This creates a new dictionary with month names as keys, and the day numbers in a list as the value, ex.
+# # {
+# #     'Oct': [24, 24, 24, 25, 25, 26, 26, 27, 27, 27],
+# #     'Nov': [1, 2, 3, 3, 3, 4]
+# # }
+# # We retain duplicates so we can count them, that's how many requests were made each day
+# monthly = {}
+# for date in dates:
+#     if date[1] not in monthly.keys():
+#         monthly[date[1]] = []
+#     monthly[date[1]].append(date[0])
+
+# # For each month
+# for month, days in monthly.items():
+#     # Monthly
+#     # Just count the number of items in the `days` list
+#     print(str(len(days)) + ' requests in ' + month)
+
+#     # Daily
+#     # For each day, print the amount of times that day occurs in the `days` list
+#     for day in set(days):
+#         print(month + ': ' + str(days.count(day)) + ' requests on the ' + str(day))
+
+#     # Weekly
+#     # TODO: Do this
+
+
+# Get a list of all the status codes, again retaining duplicates
+status_codes = [c['status_code'] for c in reqs if c['status_code'] != '']
+
+
+# Get a new list of status codes beginning in '4' (failed)
+failed = [f for f in status_codes if f[0] == '4']
+# Find the percentage failed, failed ÷ total
+percentage_failed = round(len(failed) / len(status_codes), 3)
+# Print the percentage in a nice way
+print("% of failed requests (4xx status code): " + str(percentage_failed * 100) + "%")
+
+# Same as above but with requests starting in '3'
+redirected = [r for r in status_codes if r[0] == '3']
+percentage_redirected = round(len(redirected) / len(status_codes), 3)
+print("% of redirected requests (3xx status code): " + str(percentage_redirected * 100) + "%")
+
