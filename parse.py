@@ -1,5 +1,9 @@
 import re
 import operator
+import requests
+
+URL = 'https://s3.amazonaws.com/tcmg476/http_access_log'
+LOCAL_FILE = 'test_http_access_log'
 
 # Lots of comments in this file, i normally don't write this many
 
@@ -52,10 +56,19 @@ def parse_request(request_string):
     req['original'] = request_string
     return req
 
-# Here's our file
-fi = "http_access_log"
+def get_log_file(url, local_file):
+    print('Getting log file...')
+    text = requests.get(url).text
+    with open(local_file, 'w') as fi:
+        fi.write(text)
+
+# If the file isn't there (if there are less than 1000 lines)
+if sum(1 for line in open(LOCAL_FILE)) == 0:
+    # Get the full log file
+    get_log_file(URL, LOCAL_FILE)
+
 # Get a list of the lines in the file, one request per line
-req_strings = open(fi, 'r').readlines()
+req_strings = open(LOCAL_FILE, 'r').readlines()
 reqs = []
 for req_string in req_strings:
     # For each line in the file, create a new request object and add it to the reqs list
