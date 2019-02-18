@@ -2,7 +2,8 @@ var app = new Vue({
   el: '#dashboard',
   data: {
     data: {},
-    months: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+    months: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+    url: ''
   },
   methods: {
     get_data() {
@@ -12,6 +13,15 @@ var app = new Vue({
       Http.onreadystatechange = (e) => {
         this.data = JSON.parse(Http.responseText);
       }
+    },
+
+    selectUrl() {
+      x = new XMLHttpRequest();
+      x.open('POST', '/select-log', async=true);
+      x.send(this.url)
+      setTimeout(() => {
+        this.get_data();
+      }, 1000);
     },
 
     datesByMonth() {

@@ -17,17 +17,27 @@
 </head>
 <body>
   <div id="dashboard">
+    <hr>
     <div uk-grid>
-      <div v-if="Object.keys(data).length > 0">
+      <div>
+        <!-- Select url -->
         <div class="uk-container">
-          <h2>Totals</h1>
-            <ul class="uk-list">
-              <li>Total requests: {{ totalRequests }}</li>
-              <li>Total good requests (2xx): {{ goodRequests }}</li>
-              <li>Total bad requests (3xx, 4xx, 5xx): {{ badRequests  }}</li>
-              <li>% of good requests: {{ Math.round((goodRequests / totalRequests) * 10000) / 100 }}%</li>
-              <li>% of bad requests: {{ Math.round((badRequests / totalRequests) * 10000) / 100 }}%</li>
-            </ul>
+          <input v-model="url" type="text" class="uk-input">
+          <button @click="selectUrl" class="uk-button uk-button-primary uk-margin uk-margin-bottom">Parse</button>
+        </div>
+        <!-- Totals -->
+        <div v-if="Object.keys(data).length > 0">
+          <div class="uk-container">
+            <h2>Totals</h1>
+              <ul class="uk-list">
+                <li>{{ data['parse_time'] }} seconds to parse</li>
+                <li>Total requests: {{ totalRequests }}</li>
+                <li>Total good requests (2xx): {{ goodRequests }}</li>
+                <li>Total bad requests (3xx, 4xx, 5xx): {{ badRequests  }}</li>
+                <li>% of good requests: {{ Math.round((goodRequests / totalRequests) * 10000) / 100 }}%</li>
+                <li>% of bad requests: {{ Math.round((badRequests / totalRequests) * 10000) / 100 }}%</li>
+              </ul>
+          </div>
         </div>
       </div>
       <div>
