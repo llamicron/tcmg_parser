@@ -12,10 +12,38 @@
   <!-- UIkit JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit-icons.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 </head>
 <body>
   <div id="dashboard">
-    {{ data }}
+    <div uk-grid>
+      <div v-if="Object.keys(data).length > 0">
+        <div class="uk-container">
+          <h2>Totals</h1>
+            <ul class="uk-list">
+              <li>Total requests: {{ totalRequests }}</li>
+              <li>Total good requests (2xx): {{ goodRequests }}</li>
+              <li>Total bad requests (3xx, 4xx, 5xx): {{ badRequests  }}</li>
+              <li>% of good requests: {{ Math.round((goodRequests / totalRequests) * 10000) / 100 }}%</li>
+              <li>% of bad requests: {{ Math.round((badRequests / totalRequests) * 10000) / 100 }}%</li>
+            </ul>
+        </div>
+      </div>
+      <div>
+        <!-- Status Codes -->
+        <canvas id="status-codes-chart" width="600" height="450"></canvas>
+      </div>
+      <div>
+        <!-- Files -->
+        <canvas id="file-count-chart" width="600" height="450"></canvas>
+      </div>
+    </div>
+    <div uk-grid>
+      <div>
+        <canvas id="dates-chart" width="1400" height="450"></canvas>
+      </div>
+    </div>
   </div>
   <script src="%% url_for('static', filename='main.js') %%"></script>
 </body>
