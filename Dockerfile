@@ -1,4 +1,5 @@
 FROM python:3-onbuild
 COPY . /usr/src/app
 WORKDIR /usr/src/app
-CMD ["make", "run"]
+EXPOSE 5000
+CMD ["make", "server"]
