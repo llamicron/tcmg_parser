@@ -8,11 +8,13 @@ def parse(url):
     LOCAL_FILE = 'http_access_log'
     pattern = r'(.*?) - (.*) \[(.*?)\] \"(.*?) (.*?)\"? HTTP\/\d.\d" (.*) (.*)'
 
+    START_TIME = time.time()
     # Get the file if needed
     # if not os.path.isfile(LOCAL_FILE):
     print('Getting file...\nThis may take a minute...')
     urlretrieve(url, LOCAL_FILE)
 
+    DOWNLOAD_TIME = str(round(time.time() - START_TIME, 2))
     # Don't time the file retrieval
     START_TIME = time.time()
 
@@ -63,11 +65,13 @@ def parse(url):
     # Print parse time
     print(str(round(time.time() - START_TIME, 2)) + ' seconds to parse')
 
+    PARSE_TIME = str(round(time.time() - START_TIME, 2))
     # Wrap it up to make it easy to retrieve
     return {
         'dates': dates,
         'files': files,
         'status_codes': status_codes,
         'errors': errors,
-        'parse_time': str(round(time.time() - START_TIME, 2))
+        'parse_time': PARSE_TIME,
+        'download_time': DOWNLOAD_TIME
     }

@@ -3,7 +3,8 @@ var app = new Vue({
   data: {
     data: {},
     months: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-    url: ''
+    // url: 'https://s3.amazonaws.com/tcmg476/http_access_log'
+    url: 'https://raw.githubusercontent.com/llamicron/tcmg_parser/master/test_http_access_log'
   },
   methods: {
     get_data() {
