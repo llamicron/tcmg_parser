@@ -24,6 +24,7 @@
         <div class="uk-container">
           <input v-model="url" type="text" class="uk-input">
           <button @click="selectUrl" class="uk-button uk-button-primary uk-margin uk-margin-bottom">Parse</button>
+          <div v-show="loading" uk-spinner></div>
         </div>
         <!-- Totals -->
         <div v-if="Object.keys(data).length > 0">

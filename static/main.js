@@ -3,16 +3,19 @@ var app = new Vue({
   data: {
     data: {},
     months: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+    loading: false,
     // url: 'https://s3.amazonaws.com/tcmg476/http_access_log'
     url: 'https://raw.githubusercontent.com/llamicron/tcmg_parser/master/test_http_access_log'
   },
   methods: {
-    get_data() {
+    parse() {
       const Http = new XMLHttpRequest();
-      Http.open("GET", '/data');
-      Http.send();
+      Http.open("POST", '/parse');
+      Http.send(this.url);
+      this.loading = true
       Http.onreadystatechange = (e) => {
         this.data = JSON.parse(Http.responseText);
+        this.loading = false
       }
     },
 
@@ -21,7 +24,7 @@ var app = new Vue({
       x.open('POST', '/select-log', async=true);
       x.send(this.url)
       setTimeout(() => {
-        this.get_data();
+        this.parse();
       }, 1000);
     },
 
@@ -130,7 +133,7 @@ var app = new Vue({
     }
   },
   created() {
-    this.get_data();
+    this.parse();
   },
   computed: {
     totalRequests: function() {

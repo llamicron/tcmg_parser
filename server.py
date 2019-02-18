@@ -16,20 +16,15 @@ class CustomFlask(Flask):
     ))
 
 app = CustomFlask(__name__)
-app.log_url = 'https://s3.amazonaws.com/tcmg476/http_access_log'
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/select-log', methods=['POST'])
-def select_log():
-    app.log_url = request.data.decode('utf-8')
-    return 'True'
-
-@app.route('/data', methods=["GET"])
-def serve_data():
-    return json.dumps(parse(app.log_url))
+@app.route('/parse', methods=["POST"])
+def serve_parsed_data():
+    url = request.data.decode('utf-8')
+    return json.dumps(parse(url))
 
 if __name__ == '__main__':
     app.debug = True
