@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,48 +16,77 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 </head>
+
 <body>
+  <nav class="uk-navbar-container" uk-navbar>
+    <div class="uk-navbar-left">
+      <ul class="uk-navbar-nav">
+        <li class="uk-active"><a href="#">HTTP Log Parser</a></li>
+      </ul>
+    </div>
+  </nav>
   <div id="dashboard">
-    <hr>
-    <div uk-grid>
-      <div>
-        <!-- Select url -->
-        <div class="uk-container">
-          <input v-model="url" type="text" class="uk-input">
-          <button @click="selectUrl" class="uk-button uk-button-primary uk-margin uk-margin-bottom">Parse</button>
-          <div v-show="loading" uk-spinner></div>
+    <div class="uk-container uk-margin-top">
+      <!-- URL Input and Totals -->
+      <div class="uk-child-width-1-2@m uk-grid-small uk-grid-match" uk-grid>
+        <div>
+          <div class="uk-card uk-card-default uk-card-body">
+            <h3 class="uk-card-title">Select Log</h3>
+            <!-- Select url -->
+            <div class="uk-container">
+              <input v-model="url" type="text" class="uk-input">
+              <button @click="parse" class="uk-button uk-button-primary uk-margin uk-margin-bottom">Parse</button>
+              <div v-show="loading" uk-spinner></div>
+            </div>
+          </div>
         </div>
-        <!-- Totals -->
-        <div v-if="Object.keys(data).length > 0">
-          <div class="uk-container">
-            <h2>Totals</h1>
-              <ul class="uk-list">
-                <li>{{ data['download_time'] }} seconds to download</li>
-                <li>{{ data['parse_time'] }} seconds to parse</li>
-                <li>Total requests: {{ totalRequests }}</li>
-                <li>Total good requests (2xx): {{ goodRequests }}</li>
-                <li>Total bad requests (3xx, 4xx, 5xx): {{ badRequests  }}</li>
-                <li>% of good requests: {{ Math.round((goodRequests / totalRequests) * 10000) / 100 }}%</li>
-                <li>% of bad requests: {{ Math.round((badRequests / totalRequests) * 10000) / 100 }}%</li>
-              </ul>
+        <div>
+          <div class="uk-card uk-card-primary uk-card-body">
+            <h3 class="uk-card-title">Totals</h3>
+            <div v-if="Object.keys(data).length > 0">
+              <div class="uk-container">
+                <ul class="uk-list">
+                  <li>{{ data['download_time'] }} seconds to download</li>
+                  <li>{{ data['parse_time'] }} seconds to parse</li>
+                  <li>Total requests: {{ totalRequests }}</li>
+                  <li>Total good requests (2xx): {{ goodRequests }}</li>
+                  <li>Total bad requests (3xx, 4xx, 5xx): {{ badRequests  }}</li>
+                  <li>% of good requests: {{ Math.round((goodRequests / totalRequests) * 10000) / 100 }}%</li>
+                  <li>% of bad requests: {{ Math.round((badRequests / totalRequests) * 10000) / 100 }}%</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div>
-        <!-- Status Codes -->
-        <canvas id="status-codes-chart" width="600" height="450"></canvas>
+
+
+
+
+      <!-- Donut and bar charts -->
+      <div class="uk-child-width-1-2" uk-grid>
+        <div>
+          <!-- Status Codes -->
+          <canvas id="status-codes-chart" width="" height="350"></canvas>
+        </div>
+        <div>
+          <!-- Files -->
+          <canvas id="file-count-chart" width="" height="350"></canvas>
+        </div>
       </div>
-      <div>
-        <!-- Files -->
-        <canvas id="file-count-chart" width="600" height="450"></canvas>
-      </div>
-    </div>
-    <div uk-grid>
-      <div>
-        <canvas id="dates-chart" width="1400" height="450"></canvas>
+
+
+
+
+      <!-- Line chart -->
+      <div uk-grid>
+        <div>
+          <canvas id="dates-chart" width="1400" height="450"></canvas>
+        </div>
       </div>
     </div>
   </div>
   <script src="%% url_for('static', filename='main.js') %%"></script>
 </body>
+
 </html>

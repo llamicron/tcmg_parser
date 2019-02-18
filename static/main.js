@@ -2,30 +2,24 @@ var app = new Vue({
   el: '#dashboard',
   data: {
     data: {},
-    months: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     loading: false,
-    // url: 'https://s3.amazonaws.com/tcmg476/http_access_log'
-    url: 'https://raw.githubusercontent.com/llamicron/tcmg_parser/master/test_http_access_log'
+    charts: [],
+    // url: 'https://s3.amazonaws.com/tcmg476/http_access_log',
+    url: 'https://raw.githubusercontent.com/llamicron/tcmg_parser/master/test_http_access_log',
   },
   methods: {
-    parse() {
+    parse(url='') {
+      // Post a url to the server and loads the data it parses from that url
       const Http = new XMLHttpRequest();
       Http.open("POST", '/parse');
       Http.send(this.url);
       this.loading = true
       Http.onreadystatechange = (e) => {
+        this.destroyCharts();
         this.data = JSON.parse(Http.responseText);
         this.loading = false
       }
-    },
-
-    selectUrl() {
-      x = new XMLHttpRequest();
-      x.open('POST', '/select-log', async=true);
-      x.send(this.url)
-      setTimeout(() => {
-        this.parse();
-      }, 1000);
     },
 
     datesByMonth() {
@@ -58,7 +52,7 @@ var app = new Vue({
         this.data['status_codes']['4xx'],
         this.data['status_codes']['5xx'],
       ]
-      this.statusCodesChart = new Chart(document.getElementById("status-codes-chart"), {
+      chart = new Chart(document.getElementById("status-codes-chart"), {
         type: 'doughnut',
         data: {
           labels: ['2xx', '3xx', '4xx', '5xx'],
@@ -77,6 +71,7 @@ var app = new Vue({
           }
         }
       });
+      this.charts.push(chart)
     },
 
     renderFileCountChart() {
@@ -85,7 +80,7 @@ var app = new Vue({
       labels.forEach(label => {
         amounts.push(this.data.files[label])
       });
-      new Chart(document.getElementById("file-count-chart"), {
+      chart = new Chart(document.getElementById("file-count-chart"), {
         type: 'horizontalBar',
         data: {
           labels: labels,
@@ -105,12 +100,13 @@ var app = new Vue({
           }
         }
       });
+      this.charts.push(chart)
     },
 
     renderDatesChart() {
       dates = this.datesByMonth()
       el = document.getElementById('dates-chart')
-      new Chart(document.getElementById("dates-chart"), {
+      chart = new Chart(document.getElementById("dates-chart"), {
         type: 'line',
         data: {
           labels: this.months,
@@ -130,6 +126,14 @@ var app = new Vue({
           }
         }
       });
+      this.charts.push(chart)
+    },
+
+    destroyCharts() {
+      this.charts.forEach(chart => {
+        chart.destroy();
+      });
+      this.charts = []
     }
   },
   created() {
@@ -138,8 +142,8 @@ var app = new Vue({
   computed: {
     totalRequests: function() {
       sum = 0
-      Object.values(this.data.status_codes).forEach(amount => {
-        sum += parseInt(amount)
+      Object.keys(this.data.status_codes).forEach(key => {
+        sum += this.data.status_codes[key]
       });
       return sum
     },
