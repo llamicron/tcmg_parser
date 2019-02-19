@@ -53,7 +53,8 @@ def parse(url):
         try:
             files[file] += 1
         except KeyError:
-            files[file] = 0
+            files[file] = 1
+
 
         date = req.group(m['timestamp'])[0:11]
 

@@ -41,13 +41,24 @@
           </div>
         </div>
         <div>
-          <div class="uk-card uk-card-primary uk-card-body">
+          <div class="uk-card uk-card-default uk-card-body">
             <h3 class="uk-card-title">Totals</h3>
             <div v-if="Object.keys(data).length > 0">
               <div class="uk-container">
                 <ul class="uk-list">
+                  <li>
+                    <b>
+                      Parse Time
+                    </b>
+                  </li>
                   <li>{{ data['download_time'] }} seconds to download</li>
                   <li>{{ data['parse_time'] }} seconds to parse</li>
+                  <li></li>
+                  <li>
+                    <b>
+                      Request Counts
+                    </b>
+                  </li>
                   <li>Total requests: {{ totalRequests }}</li>
                   <li>Total good requests (2xx): {{ goodRequests }}</li>
                   <li>Total bad requests (3xx, 4xx, 5xx): {{ badRequests  }}</li>
@@ -60,9 +71,6 @@
         </div>
       </div>
 
-
-
-
       <!-- Donut and bar charts -->
       <div class="uk-child-width-1-2" uk-grid>
         <div>
@@ -74,9 +82,6 @@
           <canvas id="file-count-chart" width="" height="350"></canvas>
         </div>
       </div>
-
-
-
 
       <!-- Line chart -->
       <div uk-grid>

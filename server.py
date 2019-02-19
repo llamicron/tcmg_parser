@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 
 from parse import parse
 
+
 class CustomFlask(Flask):
     jinja_options = Flask.jinja_options.copy()
     jinja_options.update(dict(
